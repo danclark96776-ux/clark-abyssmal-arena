@@ -13,7 +13,7 @@ python -m http.server 8001
 Open `http://localhost:8001/abysmal-arena.html`.
 
 ## Deploy to GitHub Pages
-
+ 
 This project is already set up as a static Vite app, so GitHub Pages can host it with the built `dist` output.
 
 1. Push the repo to GitHub.
