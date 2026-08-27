@@ -1,0 +1,9 @@
+.venv/
+.vscode/
+node_modules/
+assets/
+docs/
+# Keep GitHub Pages workflow tracked
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
