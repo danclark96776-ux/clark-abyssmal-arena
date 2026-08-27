@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Abysmal Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/game.css?v=4">
+</head>
+<body>
+<div id="app">
+  <div id="stage-wrap">
+    <canvas id="gl"></canvas>
+
+    <div id="hud" class="hidden">
+      <div class="bars">
+        <div class="bar-wrap p1">
+          <div class="bar-track"><div class="bar-fill" id="p1Fill"></div></div>
+          <div class="meta-row">
+            <div class="name" id="p1Name">—</div>
+            <div class="combo-tag" id="p1Combo">x1</div>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="p1Meter"></div></div>
+          <div class="pips" id="pipsP1"><span class="pip"></span><span class="pip"></span></div>
+        </div>
+        <div class="center-info">
+          <div id="timer">60</div>
+          <div id="modeStatus" class="mode-status">Quick Match</div>
+        </div>
+        <div class="bar-wrap p2">
+          <div class="bar-track"><div class="bar-fill" id="p2Fill"></div></div>
+          <div class="meta-row right">
+            <div class="combo-tag" id="p2Combo">x1</div>
+            <div class="name" id="p2Name">—</div>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="p2Meter"></div></div>
+          <div class="pips" id="pipsP2"><span class="pip"></span><span class="pip"></span></div>
+        </div>
+      </div>
+      <div id="banner"></div>
+      <button id="pauseBtn">II</button>
+    </div>
+
+    <div id="menu" class="screen">
+      <div class="rune-ring"></div>
+      <div class="menu-panel">
+        <h1>ABYSMAL<br>ARENA</h1>
+        <p class="tagline">Judgement Awaits</p>
+        <p id="modeState" class="mode-state">Quick Match</p>
+        <div class="mode-row" aria-label="Game modes">
+          <button class="mode-btn active" data-mode="quick">Quick</button>
+          <button class="mode-btn" data-mode="arcade">Arcade</button>
+          <button class="mode-btn" data-mode="survival">Survival</button>
+          <button class="mode-btn" data-mode="training">Training</button>
+        </div>
+        <button id="startBtn" class="primary-btn">Enter the Arena</button>
+        <label class="two-p-toggle"><input type="checkbox" id="twoPToggle"> 2‑Player local (keyboard)</label>
+        <button id="settingsBtn" class="secondary-btn">Settings</button>
+      </div>
+    </div>
+
+    <div id="select" class="screen hidden">
+      <h2 id="selectTitle">Choose Your Fighter</h2>
+      <div class="select-layout">
+        <div class="roster" id="roster"></div>
+        <div class="fighter-detail" id="fighterDetail">
+          <div class="detail-identity">
+            <h3 id="detailName">Choose a fighter</h3>
+            <p id="detailTagline">Select an icon to inspect them</p>
+          </div>
+          <div class="detail-lore" id="detailLore"></div>
+          <div class="detail-stats" id="detailStats"></div>
+          <div class="detail-art" id="detailArt"></div>
+          <div class="detail-actions">
+            <button id="detailHdBtn" class="hd-btn" hidden>Import HD model</button>
+            <button id="selectConfirmBtn" class="primary-btn" disabled>Choose Fighter</button>
+            <button id="selectBackBtn" class="secondary-btn">Back</button>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="hdFileInput" accept=".glb,.gltf" style="display:none">
+    </div>
+
+    <div id="vs" class="screen hidden">
+      <div class="vs-row">
+        <div class="vs-card" id="vsP1"></div>
+        <div class="vs-versus">VS</div>
+        <div class="vs-card" id="vsP2"></div>
+      </div>
+      <button id="fightBtn" class="primary-btn">Begin Battle</button>
+      <button id="vsBackBtn" class="secondary-btn">Back</button>
+    </div>
+
+    <div id="matchEnd" class="screen hidden">
+      <h2 id="matchEndTitle">Victory</h2>
+      <button id="playAgainBtn" class="primary-btn">Play Again</button>
+      <button id="matchEndBackBtn" class="secondary-btn">Back to Menu</button>
+    </div>
+
+    <div id="pauseOverlay" class="screen hidden">
+      <h2>Paused</h2>
+      <button id="resumeBtn" class="primary-btn">Resume</button>
+      <button id="rematchBtn" class="secondary-btn">Rematch</button>
+      <button id="menuBtn" class="secondary-btn">Change Fighters</button>
+      <button id="settingsBtnPause" class="secondary-btn">Settings</button>
+    </div>
+
+    <div id="settings" class="screen hidden">
+      <h2>Settings</h2>
+      <div class="settings-block">
+        <label class="settings-label" for="uiScaleSlider">UI Scale <span id="uiScaleValue">100%</span></label>
+        <input type="range" id="uiScaleSlider" min="0.75" max="1.5" step="0.05" value="1">
+      </div>
+      <div class="settings-columns">
+        <div class="settings-block">
+          <h3>Player 1</h3>
+          <div class="keybind-list" id="keybindsP1"></div>
+        </div>
+        <div class="settings-block">
+          <h3>Player 2</h3>
+          <div class="keybind-list" id="keybindsP2"></div>
+        </div>
+      </div>
+      <div class="settings-actions">
+        <button id="settingsResetBtn" class="secondary-btn">Reset to Defaults</button>
+        <button id="settingsBackBtn" class="primary-btn">Back</button>
+      </div>
+    </div>
+
+    <div id="controls" class="hidden" aria-label="Touch controls">
+      <div class="pad left-pad">
+        <button data-act="left" class="pad-btn">◀</button>
+        <button data-act="right" class="pad-btn">▶</button>
+        <button data-act="jump" class="pad-btn">▲</button>
+        <button data-act="block" class="pad-btn">GUARD</button>
+      </div>
+      <div class="pad right-pad">
+        <button data-act="kick" class="pad-btn kick">HEAVY</button>
+        <button data-act="punch" class="pad-btn punch">LIGHT</button>
+        <button data-act="special" class="pad-btn special">SPECIAL</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
